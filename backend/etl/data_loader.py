@@ -2,7 +2,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 import os
 
-DB_URI = "mysql+pymysql://root:password@localhost:3306/retail_hub"
+DB_URI = "mysql+pymysql://root:devansh123@localhost:3306/retail_hub"
 # Base path relative to current script assuming it's run from the project root
 EXCEL_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'docs', 'Online Retail.xlsx')
 
