@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { ClassificationResponse } from '../types/api';
+import type { ClassificationResponse } from '../types/api';
 
 const ClassificationEngine = () => {
   const [data, setData] = useState<ClassificationResponse | null>(null);

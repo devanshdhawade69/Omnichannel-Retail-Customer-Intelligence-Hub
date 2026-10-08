@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ZAxis } from 'recharts';
-import { ClusteringResponse } from '../types/api';
+import type { ClusteringResponse } from '../types/api';
 
 const ClusteringEngine = () => {
   const [data, setData] = useState<ClusteringResponse | null>(null);

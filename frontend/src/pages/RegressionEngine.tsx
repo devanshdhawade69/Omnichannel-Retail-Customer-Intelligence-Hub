@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { RegressionResponse } from '../types/api';
+import type { RegressionResponse } from '../types/api';
 
 const RegressionEngine = () => {
   const [data, setData] = useState<RegressionResponse | null>(null);

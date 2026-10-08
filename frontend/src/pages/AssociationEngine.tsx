@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { AssociationResponse } from '../types/api';
+import type { AssociationResponse } from '../types/api';
 
 const AssociationEngine = () => {
   const [data, setData] = useState<AssociationResponse | null>(null);

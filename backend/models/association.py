@@ -2,7 +2,8 @@ import pandas as pd
 from mlxtend.frequent_patterns import apriori, association_rules
 from sqlalchemy import create_engine
 
-DB_URI = "mysql+pymysql://root:password@localhost:3306/retail_hub"
+import os
+DB_URI = os.environ.get("DB_URI")
 
 def market_basket():
     engine = create_engine(DB_URI)

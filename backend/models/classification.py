@@ -5,7 +5,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from sqlalchemy import create_engine
 
-DB_URI = "mysql+pymysql://root:password@localhost:3306/retail_hub"
+import os
+DB_URI = os.environ.get("DB_URI")
 
 def predict_loyalty():
     engine = create_engine(DB_URI)

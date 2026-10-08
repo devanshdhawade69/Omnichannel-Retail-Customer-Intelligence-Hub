@@ -1,13 +1,14 @@
 import { NavLink } from 'react-router-dom';
-import { BarChart3, PieChart, Target, ShoppingCart, Activity } from 'lucide-react';
+import { BarChart3, PieChart, Target, ShoppingCart, Activity, Package } from 'lucide-react';
 
 const Sidebar = () => {
   const links = [
-    { to: '/', icon: <Activity size={20} />, label: 'Overview' },
-    { to: '/regression', icon: <BarChart3 size={20} />, label: 'Revenue Predictor' },
-    { to: '/clustering', icon: <PieChart size={20} />, label: 'Customer Segments' },
-    { to: '/classification', icon: <Target size={20} />, label: 'Loyalty Classifier' },
-    { to: '/association', icon: <ShoppingCart size={20} />, label: 'Market Basket' },
+    { to: '/admin', icon: <Activity size={20} />, label: 'Overview' },
+    { to: '/admin/products', icon: <Package size={20} />, label: 'Products' },
+    { to: '/admin/regression', icon: <BarChart3 size={20} />, label: 'Revenue Predictor' },
+    { to: '/admin/clustering', icon: <PieChart size={20} />, label: 'Customer Segments' },
+    { to: '/admin/classification', icon: <Target size={20} />, label: 'Loyalty Classifier' },
+    { to: '/admin/association', icon: <ShoppingCart size={20} />, label: 'Market Basket' },
   ];
 
   return (

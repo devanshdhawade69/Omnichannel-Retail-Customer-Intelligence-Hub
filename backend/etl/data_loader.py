@@ -1,8 +1,10 @@
 import pandas as pd
 from sqlalchemy import create_engine
 import os
+from dotenv import load_dotenv
 
-DB_URI = "mysql+pymysql://root:devansh123@localhost:3306/retail_hub"
+load_dotenv()
+DB_URI = os.environ.get("DB_URI")
 # Base path relative to current script assuming it's run from the project root
 EXCEL_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'docs', 'Online Retail.xlsx')
 
@@ -47,12 +49,19 @@ def load_data():
     time_df.to_sql('Time_Dim', engine, if_exists='append', index=False)
     db_time = pd.read_sql("SELECT time_key, invoice_date FROM Time_Dim", engine)
     
-    # 5. Build and Load Store_Dim
-    print("Building Store_Dim...")
-    store_df = pd.DataFrame({'store_name': ['Online Retail'], 'region': ['Global']})
-    store_df.to_sql('Store_Dim', engine, if_exists='append', index=False)
-    db_store = pd.read_sql("SELECT store_key FROM Store_Dim", engine)
-    default_store_key = db_store['store_key'].iloc[0]
+    # 5. Build and Load Location_Dim
+    print("Building Location_Dim...")
+    location_df = pd.DataFrame({'city': ['Unknown'], 'state': ['Unknown'], 'country': ['Global'], 'region': ['Global']})
+    location_df.to_sql('Location_Dim', engine, if_exists='append', index=False)
+    db_location = pd.read_sql("SELECT location_key FROM Location_Dim", engine)
+    default_location_key = db_location['location_key'].iloc[0]
+
+    # 5.1 Build and Load Payment_Dim
+    print("Building Payment_Dim...")
+    payment_df = pd.DataFrame({'payment_method': ['Credit Card'], 'payment_status': ['Completed']})
+    payment_df.to_sql('Payment_Dim', engine, if_exists='append', index=False)
+    db_payment = pd.read_sql("SELECT payment_key FROM Payment_Dim", engine)
+    default_payment_key = db_payment['payment_key'].iloc[0]
 
     # 6. Build and Load Sales_Fact
     print("Building Sales_Fact...")
@@ -65,7 +74,8 @@ def load_data():
     fact_df = fact_df.merge(db_time, left_on='InvoiceDate', right_on='invoice_date', how='left')
     
     sales_fact = fact_df[['InvoiceNo', 'product_key', 'customer_key', 'time_key', 'Quantity', 'total_amount']].copy()
-    sales_fact['store_key'] = default_store_key
+    sales_fact['location_key'] = default_location_key
+    sales_fact['payment_key'] = default_payment_key
     sales_fact.rename(columns={'InvoiceNo': 'invoice_no', 'Quantity': 'quantity'}, inplace=True)
     
     print("Loading Sales_Fact to database (this might take a minute)...")

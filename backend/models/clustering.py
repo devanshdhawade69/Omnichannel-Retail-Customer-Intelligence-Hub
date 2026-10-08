@@ -2,7 +2,8 @@ import pandas as pd
 from sklearn.cluster import KMeans
 from sqlalchemy import create_engine
 
-DB_URI = "mysql+pymysql://root:password@localhost:3306/retail_hub"
+import os
+DB_URI = os.environ.get("DB_URI")
 
 def segment_customers():
     engine = create_engine(DB_URI)
