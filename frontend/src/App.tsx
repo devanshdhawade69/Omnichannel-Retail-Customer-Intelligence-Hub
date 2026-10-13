@@ -3,7 +3,7 @@ import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import RegressionEngine from './pages/RegressionEngine';
 import ClusteringEngine from './pages/ClusteringEngine';
-import ClassificationEngine from './pages/ClassificationEngine';
+import ClusteringClassificationEngine from './pages/ClassificationEngine';
 import AssociationEngine from './pages/AssociationEngine';
 import AdminProducts from './pages/AdminProducts';
 
@@ -14,14 +14,25 @@ import Login from './pages/shop/Login';
 import Register from './pages/shop/Register';
 import { ShopProvider } from './context/ShopContext';
 
+import CapitalioDashboardDemo from './demo';
+import { DashboardPage } from './components/capitalio/dashboard-page';
+import { AnalyticsPage } from './components/capitalio/analytics-page';
+import { DashboardNavigationProvider } from './components/capitalio/navigation';
 
 const AdminOverview = () => (
-  <div className="p-8 flex flex-col items-center justify-center h-full text-center animate-in fade-in zoom-in-95 duration-500">
-    <h2 className="text-5xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-secondary">E-Shop Analytics Hub</h2>
-    <p className="text-xl text-slate-400 max-w-2xl leading-relaxed">
-      Welcome to your central data mining dashboard. Select an engine from the sidebar to analyze regression, segmentation, classification, and association rules based on your e-commerce dataset.
-    </p>
-  </div>
+  <DashboardNavigationProvider>
+    <div className="capitalio-dashboard min-h-full">
+      <DashboardPage />
+    </div>
+  </DashboardNavigationProvider>
+);
+
+const AdminAnalytics = () => (
+  <DashboardNavigationProvider>
+    <div className="capitalio-dashboard min-h-full">
+      <AnalyticsPage />
+    </div>
+  </DashboardNavigationProvider>
 );
 
 const AdminLayout = () => (
@@ -52,25 +63,29 @@ function App() {
   return (
     <ShopProvider>
       <Routes>
-      {/* E-Commerce Public Routes */}
-      <Route element={<ShopLayout />}>
-        <Route path="/" element={<ShopHome />} />
-        {/* Placeholder routes for full e-commerce */}
-        <Route path="/product/:id" element={<ProductDetails />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Route>
+        {/* E-Commerce Public Routes */}
+        <Route element={<ShopLayout />}>
+          <Route path="/" element={<ShopHome />} />
+          <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
 
-      {/* Admin / Data Mining Routes */}
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<AdminOverview />} />
-        <Route path="products" element={<AdminProducts />} />
-        <Route path="regression" element={<RegressionEngine />} />
-        <Route path="clustering" element={<ClusteringEngine />} />
-        <Route path="classification" element={<ClassificationEngine />} />
-        <Route path="association" element={<AssociationEngine />} />
-      </Route>
+        {/* Admin / Data Mining Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminOverview />} />
+          <Route path="analytics" element={<AdminAnalytics />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="regression" element={<RegressionEngine />} />
+          <Route path="clustering" element={<ClusteringEngine />} />
+          <Route path="classification" element={<ClusteringClassificationEngine />} />
+          <Route path="association" element={<AssociationEngine />} />
+        </Route>
+
+        {/* Standalone Capitalio Experience */}
+        <Route path="/demo" element={<CapitalioDashboardDemo />} />
+        <Route path="/capitalio" element={<CapitalioDashboardDemo />} />
       </Routes>
     </ShopProvider>
   );

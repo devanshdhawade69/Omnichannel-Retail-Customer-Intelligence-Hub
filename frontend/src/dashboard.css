@@ -1,0 +1,102 @@
+/* Capitalio Dashboard Styles */
+
+:root {
+  --sidebar-width: 15.625rem;
+  --background: #090d16;
+  --foreground: #f1f5f9;
+  --card: #0e1526;
+  --card-foreground: #f8fafc;
+  --popover: #0e1526;
+  --popover-foreground: #f8fafc;
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
+  --secondary: #1e293b;
+  --secondary-foreground: #f8fafc;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #1e293b;
+  --input: #1e293b;
+  --ring: #3b82f6;
+
+  /* Chart color tokens */
+  --chart-1: #3b82f6;
+  --chart-2: #8b5cf6;
+  --chart-3: #f59e0b;
+  --chart-4: #10b981;
+  --chart-5: #06b6d4;
+
+  /* Sidebar color tokens */
+  --sidebar-background: #090d16;
+  --sidebar-foreground: #94a3b8;
+  --sidebar-primary: #3b82f6;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #151f38;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #1a2542;
+  --sidebar-ring: #3b82f6;
+}
+
+.capitalio-dashboard {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.font-section {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.shadow-custom {
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45), 0 2px 6px -1px rgba(0, 0, 0, 0.35);
+}
+
+.active-sidebar-item {
+  background: rgba(59, 130, 246, 0.12) !important;
+  color: #60a5fa !important;
+  border: 1px solid rgba(59, 130, 246, 0.28) !important;
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.15);
+}
+
+.dashboard-icon-badge {
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+}
+
+.premium-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
+}
+
+.dashboard-progress-fill {
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dashboard-dot-grid {
+  background-color: rgba(14, 21, 38, 0.7);
+  background-image: radial-gradient(rgba(148, 163, 184, 0.15) 1px, transparent 1px);
+  background-size: 16px 16px;
+  border: 1px solid rgba(30, 41, 59, 0.8);
+}
+
+/* Hide scrollbars while allowing scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
