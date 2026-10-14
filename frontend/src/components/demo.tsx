@@ -1,19 +1,19 @@
 import type { ReactNode } from 'react'
 import DashboardLayout from './dashboard-layout'
-import { AnalyticsPage } from './components/capitalio/analytics-page'
-import { DashboardPage } from './components/capitalio/dashboard-page'
-import RegressionEngine from './pages/RegressionEngine'
-import ClusteringEngine from './pages/ClusteringEngine'
-import ClassificationEngine from './pages/ClassificationEngine'
-import AssociationEngine from './pages/AssociationEngine'
-import AdminProducts from './pages/AdminProducts'
+import RegressionEngine from '../pages/RegressionEngine'
+import ClusteringEngine from '../pages/ClusteringEngine'
+import ClassificationEngine from '../pages/ClassificationEngine'
+import AssociationEngine from '../pages/AssociationEngine'
+import AdminProducts from '../pages/AdminProducts'
+import { AnalyticsPage } from './capitalio/analytics-page'
+import { DashboardPage } from './capitalio/dashboard-page'
+import { NetWorthPage } from './capitalio/net-worth-page'
 import {
   DashboardNavigationProvider,
   useDashboardNavigation,
-} from './components/capitalio/navigation'
+} from './capitalio/navigation'
 
 const blankRoutes = new Set([
-  '/net-worth',
   '/stocks',
   '/crypto',
   '/real-estate',
@@ -29,36 +29,18 @@ function DashboardRoute() {
 
   if (pathname === '/analytics') {
     content = <AnalyticsPage />
+  } else if (pathname === '/net-worth') {
+    content = <NetWorthPage />
   } else if (pathname === '/regression') {
-    content = (
-      <div className="p-6">
-        <RegressionEngine />
-      </div>
-    )
+    content = <RegressionEngine />
   } else if (pathname === '/clustering') {
-    content = (
-      <div className="p-6">
-        <ClusteringEngine />
-      </div>
-    )
+    content = <ClusteringEngine />
   } else if (pathname === '/classification') {
-    content = (
-      <div className="p-6">
-        <ClassificationEngine />
-      </div>
-    )
+    content = <ClassificationEngine />
   } else if (pathname === '/association') {
-    content = (
-      <div className="p-6">
-        <AssociationEngine />
-      </div>
-    )
+    content = <AssociationEngine />
   } else if (pathname === '/products') {
-    content = (
-      <div className="p-6">
-        <AdminProducts />
-      </div>
-    )
+    content = <AdminProducts />
   } else if (blankRoutes.has(pathname)) {
     content = null
   }

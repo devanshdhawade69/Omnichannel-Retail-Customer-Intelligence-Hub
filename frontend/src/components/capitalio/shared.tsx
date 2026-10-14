@@ -1,5 +1,5 @@
 import React from 'react'
-import { dashboardPeriods, defaultDashboardPeriod } from '../../data'
+import { dashboardPeriods, defaultDashboardPeriod } from './data'
 import { cn } from '@/lib/utils'
 import { useDashboardNavigation } from './navigation'
 
@@ -46,12 +46,15 @@ export function toneColor(tone: 'positive' | 'negative' | 'neutral') {
 export function DashboardCard({
   children,
   className,
+  style,
 }: {
   children: React.ReactNode
   className?: string
+  style?: React.CSSProperties
 }) {
   return (
     <article
+      style={style}
       className={cn(
         'shadow-custom min-w-0 rounded-lg border border-border bg-card p-4 text-card-foreground',
         className,

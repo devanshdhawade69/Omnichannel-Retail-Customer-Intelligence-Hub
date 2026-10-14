@@ -18,7 +18,7 @@ import {
   defaultDashboardPeriod,
   getPageTitle,
   type PeriodValue,
-} from '../../data'
+} from './data'
 
 function isPeriodValue(value: string | null): value is PeriodValue {
   return dashboardPeriods.some((periodOption) => periodOption.value === value)

@@ -33,16 +33,28 @@ const ShopContext = createContext<ShopContextType | undefined>(undefined);
 export const ShopProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(() => {
     const savedUser = localStorage.getItem('retailUser');
-    return savedUser ? JSON.parse(savedUser) : null;
+    try {
+      return savedUser && savedUser !== 'null' ? JSON.parse(savedUser) : null;
+    } catch {
+      return null;
+    }
   });
 
   const [cart, setCart] = useState<CartItem[]>(() => {
     const savedCart = localStorage.getItem('retailCart');
-    return savedCart ? JSON.parse(savedCart) : [];
+    try {
+      return savedCart && savedCart !== 'null' ? JSON.parse(savedCart) : [];
+    } catch {
+      return [];
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem('retailUser', JSON.stringify(user));
+    if (user) {
+      localStorage.setItem('retailUser', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('retailUser');
+    }
   }, [user]);
 
   useEffect(() => {

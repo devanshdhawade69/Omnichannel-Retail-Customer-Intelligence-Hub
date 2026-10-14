@@ -20,7 +20,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
-import { currentUser, sidebarSections, type NavigationItem, type NavigationSection } from '../../data'
+import { currentUser, sidebarSections, type NavigationItem, type NavigationSection } from './data'
 import { cn } from '@/lib/utils'
 
 function Brand() {

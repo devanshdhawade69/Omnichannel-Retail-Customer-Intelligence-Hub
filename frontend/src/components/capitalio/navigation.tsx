@@ -7,7 +7,7 @@ import {
   type MouseEvent,
   type ReactNode,
 } from 'react'
-import { defaultDashboardPeriod, type PeriodValue } from '../../data'
+import { defaultDashboardPeriod, type PeriodValue } from './data'
 
 type DashboardNavigation = {
   pathname: string

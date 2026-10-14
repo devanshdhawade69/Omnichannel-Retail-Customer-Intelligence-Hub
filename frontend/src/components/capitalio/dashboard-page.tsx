@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   Area,
   AreaChart as RechartsAreaChart,
@@ -14,8 +15,10 @@ import {
   dashboardBottomByPeriod,
   dashboardDetailByPeriod,
   dashboardSummaryCardsByPeriod,
+  modelComparisons,
+  type ModelComparisonItem,
   type PeriodValue,
-} from '../../data'
+} from './data'
 import {
   DashboardAnalyticsUpIcon,
   Dashboard3dScaleIcon,
@@ -27,6 +30,7 @@ import {
   DashboardShieldIcon,
   DashboardTaxesIcon,
 } from './icons'
+import { useDashboardNavigation } from './navigation'
 import { Button } from '@/components/ui/button'
 import {
   ChartMarker,
@@ -752,48 +756,383 @@ function InsightIcon({ item }: { item: InsightItem }) {
   )
 }
 
-function SmartInsightsPanel({ insights }: { insights: DashboardBottom['insights'] }) {
-  return (
-    <DashboardCard className="flex flex-col gap-6">
-      <DetailHeader title={insights.title}>
-        <DetailTag>{insights.status}</DetailTag>
-      </DetailHeader>
+function ModelComparisonCard({
+  item,
+  isExpanded,
+  onNavigate,
+}: {
+  item: ModelComparisonItem
+  isExpanded?: boolean
+  onNavigate: (route: string) => void
+}) {
+  const [showRationale, setShowRationale] = useState(true)
 
-      <div className="flex flex-col gap-6">
-        {insights.items.map((item, index) => (
-          <div
-            key={item.title}
-            className={cn('flex gap-3', index > 0 && 'border-t border-border pt-6')}
-          >
-            <InsightIcon item={item} />
-            <div className="min-w-0 flex-1">
-              <div className="font-medium leading-tight">{item.title}</div>
-              <div className="mt-2 text-sm leading-snug text-muted-foreground">
-                {item.description}
-              </div>
-              <div className="mt-3 flex justify-end">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                >
-                  <span className="truncate">{item.action}</span>
-                  <DashboardArrowUpRightIcon className="size-4 shrink-0" />
-                </Button>
-              </div>
+  return (
+    <div className="rounded-xl border border-border/80 bg-card/60 backdrop-blur-sm p-4 transition-all duration-200 hover:border-primary/40 shadow-sm">
+      {/* Engine Header */}
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <h4 className="text-sm font-semibold tracking-tight text-foreground">{item.engine}</h4>
+            <span className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
+              {item.status}
+            </span>
+          </div>
+          <p className="mt-0.5 text-xs text-muted-foreground">{item.task}</p>
+        </div>
+
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          className="h-7 gap-1 px-2.5 text-xs font-medium"
+          onClick={() => onNavigate(item.route)}
+        >
+          <span>Launch Engine</span>
+          <DashboardArrowUpRightIcon className="size-3.5 shrink-0" />
+        </Button>
+      </div>
+
+      {/* Side-by-Side Model Comparison Grid */}
+      <div className={cn('mt-3 grid gap-3', isExpanded ? 'md:grid-cols-2' : 'grid-cols-1')}>
+        {/* Selected Model */}
+        <div className="relative rounded-lg border border-emerald-500/40 bg-emerald-950/20 p-3">
+          <div className="flex items-center justify-between gap-1.5">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                ★ {item.selectedModel.badge}
+              </span>
+              <h5 className="text-sm font-bold text-foreground">{item.selectedModel.name}</h5>
+              <div className="text-[11px] text-muted-foreground">{item.selectedModel.algorithmType}</div>
             </div>
           </div>
-        ))}
+
+          {/* Metric Pills Grid */}
+          <div className="mt-2.5 grid grid-cols-2 gap-1.5">
+            {item.selectedModel.metrics.map((m) => (
+              <div
+                key={m.label}
+                className={cn(
+                  'rounded-md border p-1.5 text-center transition-colors',
+                  m.isHighlight
+                    ? 'border-emerald-500/30 bg-emerald-500/15 text-emerald-300'
+                    : 'border-border/60 bg-background/60 text-foreground'
+                )}
+              >
+                <div className="text-[10px] text-muted-foreground">{m.label}</div>
+                <div className="text-xs font-bold">{m.value}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Strengths */}
+          <div className="mt-2.5 space-y-1">
+            {item.selectedModel.strengths.map((s, idx) => (
+              <div key={idx} className="flex items-start gap-1.5 text-[11px] leading-tight text-foreground/90">
+                <span className="text-emerald-400 font-bold shrink-0">✓</span>
+                <span>{s}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Alternative Model */}
+        <div className="relative rounded-lg border border-border/70 bg-card/40 p-3">
+          <div className="flex items-center justify-between gap-1.5">
+            <div>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                {item.alternativeModel.badge}
+              </span>
+              <h5 className="text-sm font-semibold text-foreground/85">{item.alternativeModel.name}</h5>
+              <div className="text-[11px] text-muted-foreground">{item.alternativeModel.algorithmType}</div>
+            </div>
+          </div>
+
+          {/* Metric Pills Grid */}
+          <div className="mt-2.5 grid grid-cols-2 gap-1.5">
+            {item.alternativeModel.metrics.map((m) => (
+              <div key={m.label} className="rounded-md border border-border/50 bg-background/40 p-1.5 text-center">
+                <div className="text-[10px] text-muted-foreground">{m.label}</div>
+                <div className="text-xs font-semibold text-muted-foreground">{m.value}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Weaknesses */}
+          <div className="mt-2.5 space-y-1">
+            {item.alternativeModel.weaknesses.map((w, idx) => (
+              <div key={idx} className="flex items-start gap-1.5 text-[11px] leading-tight text-muted-foreground">
+                <span className="text-red-400/80 font-bold shrink-0">✕</span>
+                <span>{w}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* Delta Performance Callout */}
+      <div className="mt-2.5 flex items-center justify-between gap-2 rounded-lg border border-primary/25 bg-primary/10 px-3 py-1.5 text-xs">
+        <span className="font-semibold text-primary">Performance Margin:</span>
+        <span className="font-bold text-foreground">{item.delta}</span>
+      </div>
+
+      {/* Selection Rationale Expandable Section */}
+      <div className="mt-3 border-t border-border/60 pt-2.5">
+        <button
+          type="button"
+          onClick={() => setShowRationale(!showRationale)}
+          className="flex w-full items-center justify-between text-xs font-semibold text-foreground hover:text-primary transition-colors"
+        >
+          <span className="flex items-center gap-1.5">
+            <span>Why We Chose This Algorithm</span>
+            <span className="rounded-full bg-secondary px-1.5 py-0.2 text-[10px] text-muted-foreground">
+              Core Rationale
+            </span>
+          </span>
+          <span className="text-[11px] text-primary hover:underline">
+            {showRationale ? 'Hide rationale ↑' : 'Show rationale ↓'}
+          </span>
+        </button>
+
+        {showRationale && (
+          <div className="mt-2 space-y-2 text-xs">
+            <div className="rounded-md bg-secondary/35 p-2.5 border border-border/40">
+              <span className="font-semibold text-primary">🔬 Theoretical Foundation: </span>
+              <span className="text-muted-foreground leading-relaxed">{item.rationale.theoretical}</span>
+            </div>
+            <div className="rounded-md bg-secondary/35 p-2.5 border border-border/40">
+              <span className="font-semibold text-emerald-400">⚡ Operational & Scalability: </span>
+              <span className="text-muted-foreground leading-relaxed">{item.rationale.operational}</span>
+            </div>
+            <div className="rounded-md bg-secondary/35 p-2.5 border border-border/40">
+              <span className="font-semibold text-accent">💼 Business Value: </span>
+              <span className="text-muted-foreground leading-relaxed">{item.rationale.business}</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function SmartInsightsPanel({
+  insights,
+  isExpanded,
+  onToggleExpand,
+}: {
+  insights: DashboardBottom['insights']
+  isExpanded?: boolean
+  onToggleExpand?: () => void
+}) {
+  const { navigate } = useDashboardNavigation()
+  const [activeTab, setActiveTab] = useState<'alerts' | 'models'>('alerts')
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'classification' | 'clustering' | 'regression' | 'association'>('all')
+
+  const filteredModels = categoryFilter === 'all'
+    ? modelComparisons
+    : modelComparisons.filter((m) => m.category === categoryFilter)
+
+  return (
+    <DashboardCard className={cn('flex flex-col gap-5 transition-all duration-300', isExpanded ? 'col-span-full' : '')}>
+      {/* Top Header with Tab Switcher & Full Expand Option */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/80 pb-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h3 className="text-base font-semibold tracking-tight text-foreground">
+              {insights.title}
+            </h3>
+            <DetailTag>{activeTab === 'alerts' ? insights.status : '4 Engines Benchmarked'}</DetailTag>
+          </div>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {activeTab === 'alerts'
+              ? 'Real-time retail signals generated by our operational ML engines'
+              : 'Evaluation of selected algorithms against alternatives with architectural rationale'}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {/* Segmented View Switcher */}
+          <div className="flex rounded-lg border border-border bg-secondary/40 p-0.5 text-xs font-medium">
+            <button
+              type="button"
+              onClick={() => setActiveTab('alerts')}
+              className={cn(
+                'rounded-md px-2.5 py-1 transition-all',
+                activeTab === 'alerts'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              Live Alerts ({insights.items.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('models')}
+              className={cn(
+                'rounded-md px-2.5 py-1 transition-all flex items-center gap-1',
+                activeTab === 'models'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <span>Models & Rationale</span>
+              <span className="rounded-full bg-primary/20 px-1 py-0.2 text-[10px] font-bold text-primary">
+                4
+              </span>
+            </button>
+          </div>
+
+          {onToggleExpand && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onToggleExpand}
+              className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
+              title={isExpanded ? 'Collapse to single column' : 'Expand full comparison view'}
+            >
+              {isExpanded ? 'Collapse View' : 'Expand View'}
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Content based on Active Tab */}
+      {activeTab === 'alerts' ? (
+        <div className="flex flex-col gap-4">
+          {insights.items.map((item, index) => {
+            const modelTag = (item as any).modelTag as string | undefined
+            const engineRoute = (item as any).engineRoute as string | undefined
+            const comparisonId = (item as any).comparisonId as string | undefined
+
+            return (
+              <div
+                key={item.title}
+                className={cn(
+                  'flex gap-3 rounded-lg border border-transparent p-2 transition-colors hover:border-border/60 hover:bg-secondary/20',
+                  index > 0 && 'border-t border-border pt-4'
+                )}
+              >
+                <InsightIcon item={item} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center justify-between gap-1">
+                    <div className="font-semibold text-sm leading-tight text-foreground">{item.title}</div>
+                    {modelTag && (
+                      <span className="inline-flex items-center rounded-md border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                        {modelTag}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                    {item.description}
+                  </div>
+
+                  <div className="mt-3 flex items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveTab('models')
+                        if (comparisonId) {
+                          const target = modelComparisons.find((m) => m.id === comparisonId)
+                          if (target) setCategoryFilter(target.category)
+                        }
+                      }}
+                      className="text-[11px] font-medium text-primary hover:underline flex items-center gap-1"
+                    >
+                      <span>Why this model was chosen</span>
+                      <span>→</span>
+                    </button>
+
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      className="h-7 text-xs font-medium"
+                      onClick={() => {
+                        if (engineRoute) {
+                          navigate(engineRoute)
+                        }
+                      }}
+                    >
+                      <span className="truncate">{item.action}</span>
+                      <DashboardArrowUpRightIcon className="size-3.5 shrink-0" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {/* Category Filter Chips */}
+          <div className="flex flex-wrap items-center gap-1.5 text-xs border-b border-border/60 pb-3">
+            <span className="text-[11px] text-muted-foreground mr-1">Filter Engine:</span>
+            {[
+              { id: 'all', label: 'All Engines (4)' },
+              { id: 'classification', label: 'Loyalty Classifier' },
+              { id: 'clustering', label: 'RFM Segmentation' },
+              { id: 'regression', label: 'Revenue Predictor' },
+              { id: 'association', label: 'Market Basket' },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setCategoryFilter(tab.id as any)}
+                className={cn(
+                  'rounded-full px-2.5 py-0.5 text-xs transition-colors',
+                  categoryFilter === tab.id
+                    ? 'bg-primary text-primary-foreground font-semibold'
+                    : 'bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground'
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Model Cards List */}
+          <div className={cn('grid gap-4', isExpanded ? 'md:grid-cols-2' : 'grid-cols-1')}>
+            {filteredModels.map((item) => (
+              <ModelComparisonCard
+                key={item.id}
+                item={item}
+                isExpanded={isExpanded}
+                onNavigate={navigate}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </DashboardCard>
   )
 }
 
 function DashboardBottomSection({ bottom }: { bottom: DashboardBottom }) {
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  if (isExpanded) {
+    return (
+      <div className="flex flex-col gap-4">
+        <SmartInsightsPanel
+          insights={bottom.insights}
+          isExpanded={true}
+          onToggleExpand={() => setIsExpanded(false)}
+        />
+        <HoldingsTable holdings={bottom.holdings} />
+      </div>
+    )
+  }
+
   return (
     <div className="grid min-w-0 gap-3 lg:grid-cols-3">
       <HoldingsTable holdings={bottom.holdings} />
-      <SmartInsightsPanel insights={bottom.insights} />
+      <SmartInsightsPanel
+        insights={bottom.insights}
+        isExpanded={false}
+        onToggleExpand={() => setIsExpanded(true)}
+      />
     </div>
   )
 }

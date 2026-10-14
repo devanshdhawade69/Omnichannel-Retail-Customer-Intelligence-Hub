@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./components/dashboard.css";
 
 @theme {
   --color-background: #0f172a;

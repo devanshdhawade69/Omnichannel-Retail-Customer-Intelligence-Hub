@@ -9,7 +9,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { analyticsDataByPeriod, type PeriodValue } from '../../data'
+import { analyticsDataByPeriod, type PeriodValue } from './data'
 import { Button } from '@/components/ui/button'
 import {
   ChartMarker,
